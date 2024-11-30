@@ -39,23 +39,41 @@ async function run() {
     });
 
     app.get("/coffees", async (req, res)=>{
-        const options = true;
+      const options = {upsert: true};
          const query = {}
          const result = await coffeesCollection.find(query, options).toArray();
          res.send(result);
     })
 
+    app.get("/coffees/:id", async (req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await coffeesCollection.findOne(query);
+      res.send(result);
+    })
+
     app.delete("/deleteCoffee/:id", async (req, res)=>{
-        const id = req.params;
+        const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         console.log(id)
         const result = await coffeesCollection.deleteOne(query)
         res.send(result)
+        console.log(result)
     })
 
     app.put(`/updateCoffee/:id`, async (req, res) =>{
-        const updateCoffee = req.body;
+      const id = req.params.id;
+        const coffee = req.body;
+        const updateCoffee ={
+          $set: coffee
+        }
+        const filter = {_id: new ObjectId(id)}
+        const options = {upsert: true};
+        const result = await coffeesCollection.updateOne(filter, updateCoffee, options);
+        res.send(result);
+        console.log( coffee)
     })
+    
 
 
     // Connect the client to the server	(optional starting in v4.7)
