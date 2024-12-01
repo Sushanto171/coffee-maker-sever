@@ -29,6 +29,51 @@ async function run() {
 
     const database = client.db("coffeeDB");
     const coffeesCollection = database.collection("coffees");
+    const userCollection = database.collection("users");
+
+
+// user database
+app.post("/users",async (req, res)=>{
+  const data = req.body;
+  const result = await userCollection.insertOne(data);
+  res.send(result)
+});
+
+app.get("/users" , async(req, res)=>{
+  const query = {};
+  const cursor = userCollection.find(query);
+  const result = await cursor.toArray();
+  res.send(result);
+});
+
+app.delete("/users",async (req, res)=>{
+    const id = req.body;
+    const filter = {_id: new ObjectId(id)};
+    const result = await userCollection.deleteOne(filter);
+    res.send(result)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     app.post('/addCoffee', async (req, res) =>{
         const coffee = req.body; 
