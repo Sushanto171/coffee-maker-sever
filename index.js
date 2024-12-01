@@ -46,6 +46,31 @@ app.get("/users" , async(req, res)=>{
   res.send(result);
 });
 
+app.get("users/:id", async (req, res)=>{
+  const id = req.params.id;
+  const query ={_id : new ObjectId(id)};
+  const result = await userCollection.findOne(query);
+  res.send(result)
+})
+app.get("/user/via-email/:email",async (req, res)=>{
+  const email = req.params.email;
+  const query ={email};
+  const result =  await userCollection.findOne(query);
+  res.send(result? true: false);
+})
+
+app.patch("/users" , async(req, res)=>{
+  const email = req.body.email;
+  const filter = {email};
+  const updatedDoc = {
+    $set: {
+      lastSignInTime: req?.body?.lastSignInTime,
+    }
+  };
+  const result = await userCollection.updateOne(filter, updatedDoc);
+  res.send(result);
+}) 
+
 app.delete("/users",async (req, res)=>{
     const id = req.body;
     const filter = {_id: new ObjectId(id)};
@@ -122,7 +147,7 @@ app.delete("/users",async (req, res)=>{
 
 
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
