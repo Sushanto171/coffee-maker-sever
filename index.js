@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const admin = require("./admin")
 require('dotenv').config();
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -78,27 +79,21 @@ app.delete("/users",async (req, res)=>{
     res.send(result)
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+app.delete("/delete-firebase-user", async (req, res)=>{
+  const email = req.body.email;
+  console.log(email)
+  let result = null
+  try{
+    const userRecord = await admin.auth().getUserByEmail(email)
+    await admin.auth().deleteUser(userRecord.uid);
+    result = true;
+    result = true;
+  }catch(error){result = false
+    console.log(error)
+    result= false;
+  }
+  res.send(result);
+})
 
     app.post('/addCoffee', async (req, res) =>{
         const coffee = req.body; 
@@ -144,6 +139,7 @@ app.delete("/users",async (req, res)=>{
         console.log( coffee)
     })
     
+    // console.log(admin)
 
 
     // Connect the client to the server	(optional starting in v4.7)
